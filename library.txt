@@ -1,0 +1,25 @@
+create table book(
+     id serial primary key,
+     name varchar(255),
+     category varchar(255),
+     createDate date
+);
+
+create table employee(
+    id serial primary key,
+    firstName varchar(255),
+    lastName varchar(255),
+    nationalCode char(10),
+    salary decimal,
+    accessModifier varchar(255) check( accessModifier = 'admin' or accessModifier = 'libraryMan' )
+);
+
+create table member(
+    id serial primary key,
+    firstName varchar(255),
+    lastName varchar(255),
+    nationalCode char(10),
+    signUpDate date,
+    expireDate date,
+    grade varchar(255) check ( grade = 'normal' or grade = 'premium' or grade = 'vip' )
+);
