@@ -37,6 +37,9 @@ public class Member extends Person {
         return expireDate;
     }
 
+    public Date getSignUpDate() {
+        return signUpDate;
+    }
 
     public Grade getGrade() {
         return grade;
