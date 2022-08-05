@@ -24,3 +24,4 @@ create table member(
     expireDate date,
     grade varchar(255) check ( grade = 'normal' or grade = 'premium' or grade = 'vip' )
 );
+
