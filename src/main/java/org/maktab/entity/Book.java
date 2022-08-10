@@ -6,24 +6,24 @@ public class Book {
 
     private int id;
     private final String name;
-    private final String authorName;
     private final String category;
     private final Date createDate;
+    private boolean isHire;
 
-    public Book(String name, String authorName, String category, Date createDate) {
+    public Book(String name, String category, Date createDate) {
         this.name = name;
-        this.authorName = authorName;
         this.category = category;
         this.createDate = createDate;
+        isHire = false;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getAuthorName() {
+   /* public String getAuthorName() {
         return authorName;
-    }
+    }*/
 
     public String getCategory() {
         return category;
@@ -39,5 +39,13 @@ public class Book {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isHire() {
+        return isHire;
+    }
+
+    public void setHire(boolean hire) {
+        isHire = hire;
     }
 }
