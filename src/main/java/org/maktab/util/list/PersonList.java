@@ -1,6 +1,5 @@
 package org.maktab.util.list;
 
-import org.maktab.entity.Book;
 import org.maktab.entity.Person;
 
 import java.util.Arrays;

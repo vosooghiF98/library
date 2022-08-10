@@ -1,17 +1,15 @@
 package org.maktab.repository;
 
 import org.maktab.config.DBConfig;
+import org.maktab.entity.Grade;
 import org.maktab.entity.Member;
-import org.maktab.interfaces.Repository;
-
+import org.maktab.util.list.MemberList;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MemberRepository implements Repository {
-
-    @Override
-    public void save(Object o) throws SQLException {
-        Member member = (Member) o;
+public class MemberRepository {
+    public void save(Member member) throws SQLException {
         String query = """
                 insert into member (firstname, lastname, nationalcode, signupdate, expiredate, grade)
                 values (?,?,?,?,?,?);
@@ -23,25 +21,60 @@ public class MemberRepository implements Repository {
         preparedStatement.setDate(4,member.getSignUpDate());
         preparedStatement.setDate(5,member.getExpireDate());
         preparedStatement.setString(6, String.valueOf(member.getGrade()));
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
     }
 
-    @Override
-    public void remove(Object o) {
-
+    public void remove(Member member) throws SQLException {
+        String query = """
+                delete from member where id = ?;
+                """;
+        PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(query);
+        preparedStatement.setInt(1,member.getId());
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
     }
 
-    @Override
-    public Object[] load() {
-        return new Object[0];
+    public MemberList loadAll() throws SQLException {
+        String query = """
+                select * from member;
+                """;
+        PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(query);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        MemberList memberList = new MemberList();
+        while (resultSet.next()){
+            Member member = new Member(resultSet.getString("firstname"),resultSet.getString("lastname"),resultSet.getString("nationalcode"), Grade.valueOf(resultSet.getString("grade")));
+            memberList.add(member);
+        }
+        resultSet.close();
+        preparedStatement.close();
+        return memberList;
     }
 
-    @Override
-    public void edit(Object o) {
-
+    public void edit(Member member) throws SQLException {
+        String query = """
+                update member set firstname = ? , lastname = ? , nationalcode = ? , expiredate = ? , grade = ? where id = ?;
+                """;
+        PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(query);
+        preparedStatement.setString(1, member.getFirstName());
+        preparedStatement.setString(2, member.getLastName());
+        preparedStatement.setString(3, member.getNationalCode());
+        preparedStatement.setDate(4,member.getExpireDate());
+        preparedStatement.setString(5,String.valueOf(member.getGrade()));
+        preparedStatement.setInt(6,member.getId());
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
     }
 
-    @Override
-    public Object load(int id) {
-        return null;
+    public Member load(int id) throws SQLException {
+        String query = """
+                select * from member where id = ?;
+                """;
+        PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(query);
+        preparedStatement.setInt(1,id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()){
+            return new Member(resultSet.getString("firstname"),resultSet.getString("lastname"),resultSet.getString("nationalcode"), Grade.valueOf(resultSet.getString("grade")));
+        }else return null;
     }
 }
