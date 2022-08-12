@@ -25,14 +25,15 @@ public class MemberRepository {
         preparedStatement.close();
     }
 
-    public void remove(Member member) throws SQLException {
+    public int remove(Member member) throws SQLException {
         String query = """
                 delete from member where id = ?;
                 """;
         PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(query);
         preparedStatement.setInt(1,member.getId());
-        preparedStatement.executeUpdate();
+        int number = preparedStatement.executeUpdate();
         preparedStatement.close();
+        return number;
     }
 
     public MemberList loadAll() throws SQLException {
@@ -72,6 +73,18 @@ public class MemberRepository {
                 """;
         PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(query);
         preparedStatement.setInt(1,id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()){
+            return new Member(resultSet.getString("firstname"),resultSet.getString("lastname"),resultSet.getString("nationalcode"), Grade.valueOf(resultSet.getString("grade")));
+        }else return null;
+    }
+
+    public Member load(Member member) throws SQLException {
+        String query = """
+                select * from member where nationalcode = ?;
+                """;
+        PreparedStatement preparedStatement = DBConfig.getConnection().prepareStatement(query);
+        preparedStatement.setString(1, member.getNationalCode());
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()){
             return new Member(resultSet.getString("firstname"),resultSet.getString("lastname"),resultSet.getString("nationalcode"), Grade.valueOf(resultSet.getString("grade")));
